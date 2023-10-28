@@ -22,7 +22,7 @@ def feedback():
     answer = data.get('answer')
 
 
-    prompt = "Given an interview question and this response, provide a constructive critical analysis to help improve my interview answer pretending you are a speaking coach directing guidance. Question: " + question + " Response: " + answer
+    prompt = "Given an interview question and this response, provide a constructive critical analysis to help improve my interview answer pretending you are a speaking coach directing guidance. Be concise, no need to explain everything in detail. Question: " + question + " Response: " + answer
     # prompt = "hi how are you?"
     output = together.Complete.create(
         prompt,
@@ -33,7 +33,7 @@ def feedback():
         top_p = 0.7,
         repetition_penalty = 1.1,
     )
-    return output['output']['choices'][0]['text']
+    return jsonify(output['output']['choices'][0]['text'])
 
 @app.route('/api/speech-to-text', methods=['POST'])
 def speech_to_text():
