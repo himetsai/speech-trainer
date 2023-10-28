@@ -1,6 +1,6 @@
 import { None, Optional } from "../../lib/utilities/typeUtilities";
 import { useContext, useEffect, useRef, useState } from "react";
-
+import { Chart, LinearScale, PointElement, LineController, LineElement, CategoryScale, Title, Tooltip, Legend } from 'chart.js';
 import { AudioPrediction } from "../../lib/data/audioPrediction";
 import { AudioRecorder } from "../../lib/media/audioRecorder";
 import { AuthContext } from "../menu/Auth";
@@ -8,6 +8,23 @@ import { DiscreteTimeline } from "./DiscreteTimeline";
 import { TopEmotions } from "./TopEmotions";
 import { blobToBase64 } from "../../lib/utilities/blobUtilities";
 import { getApiUrlWs } from "../../lib/utilities/environmentUtilities";
+import { Emotion } from "../../lib/data/emotion";
+import { ChartData, ChartTypeRegistry } from 'chart.js';
+
+// Register the components
+Chart.register(
+  LinearScale, 
+  PointElement, 
+  LineController, 
+  LineElement, 
+  CategoryScale, 
+  Title, 
+  Tooltip, 
+  Legend
+);
+
+import EmotionTimeline from "./EmotionTimeline";  // Adjust path accordingly
+
 
 interface AudioWidgetsProps {
   modelName: string;
@@ -29,6 +46,23 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
   const maxReconnects = 3;
 
   const emotions = predictions.length == 0 ? [] : predictions[0].emotions;
+
+  const [emotionsHistory, setEmotionsHistory] = useState<{time: string, name: string, score: number}[]>([]);
+  const chartData = transformEmotionsToChartData(emotionsHistory);
+  console.log(chartData);
+
+  type ChartDataShape = ChartData<'line', number[], string[]>;
+
+  useEffect(() => {
+    const now = new Date().toISOString();
+    const topEmotions = emotions.sort((a: Emotion, b: Emotion) => b.score - a.score).slice(0, 3);
+    const newHistory = topEmotions.map(emotion => ({
+        time: now,
+        name: emotion.name,
+        score: emotion.score
+    }));
+    setEmotionsHistory(prev => [...prev, ...newHistory]);
+  }, [emotions]);
 
   useEffect(() => {
     mountRef.current = true;
@@ -103,6 +137,20 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
       serverReadyRef.current = true;
     }
   }
+
+  function transformEmotionsToChartData(emotionsHistory: { time: string; name: string; score: number; }[]): ChartDataShape {
+    const labels = emotionsHistory.map(e => [e.time]);  // Wrap the time in an array
+    const data = emotionsHistory.map(e => e.score);
+
+    return {
+        labels: labels,
+        datasets: [{
+            label: 'Emotion Score',
+            data: data,
+        }]
+    };
+}
+
 
   async function socketOnClose(event: CloseEvent) {
     console.log("Socket closed");
@@ -189,6 +237,7 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
             <DiscreteTimeline predictions={predictions} />
           </div>
         )}
+        <EmotionTimeline data={chartData} />
       </div>
 
       <div>{status}</div>
