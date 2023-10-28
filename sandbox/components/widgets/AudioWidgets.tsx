@@ -23,6 +23,7 @@ Chart.register(
   Legend
 );
 
+
 import EmotionTimeline from "./EmotionTimeline";  // Adjust path accordingly
 
 
@@ -46,23 +47,156 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
   const maxReconnects = 3;
 
   const emotions = predictions.length == 0 ? [] : predictions[0].emotions;
+  
 
   const [emotionsHistory, setEmotionsHistory] = useState<{time: string, name: string, score: number}[]>([]);
-  const chartData = transformEmotionsToChartData(emotionsHistory);
+
+  const [emotionsHistoryGroup1, setEmotionsHistoryGroup1] = useState<{time: string, name: string, score: number}[]>([]);
+  const [emotionsHistoryGroup2, setEmotionsHistoryGroup2] = useState<{time: string, name: string, score: number}[]>([]);
+  const [emotionsHistoryGroup3, setEmotionsHistoryGroup3] = useState<{time: string, name: string, score: number}[]>([]);
+  const [emotionsHistoryGroup4, setEmotionsHistoryGroup4] = useState<{time: string, name: string, score: number}[]>([]);
+
+
+  const chartData = transformEmotionsToChartData(emotionsHistoryGroup1, emotionsHistoryGroup2, emotionsHistoryGroup3, emotionsHistoryGroup4);
   console.log(chartData);
 
-  type ChartDataShape = ChartData<'line', number[], string[]>;
+  type ChartDataShape = ChartData<'line', number[], string[]>;  // Note the added extra array in string[][]
 
   useEffect(() => {
     const now = new Date().toISOString();
-    const topEmotions = emotions.sort((a: Emotion, b: Emotion) => b.score - a.score).slice(0, 3);
-    const newHistory = topEmotions.map(emotion => ({
+
+    // Handle the first group of relevant emotions
+    const anxietyEmotion = emotions.find(emotion => emotion.name === "Anxiety");
+    const doubtEmotion = emotions.find(emotion => emotion.name === "Doubt");
+    const distressEmotion = emotions.find(emotion => emotion.name === "Distress");
+    const awkwardnessEmotion = emotions.find(emotion => emotion.name === "Awkwardness");
+
+    
+    let summedScoreGroup1 = 0;
+    if (anxietyEmotion?.score) summedScoreGroup1 += anxietyEmotion.score;    // Safely access with optional chaining
+    if (doubtEmotion?.score) summedScoreGroup1 += doubtEmotion.score;        // Safely access with optional chaining
+    if (distressEmotion?.score) summedScoreGroup1 += distressEmotion.score;  // Safely access with optional chaining
+    if (awkwardnessEmotion?.score) summedScoreGroup1 += awkwardnessEmotion.score;
+
+    if (summedScoreGroup1 > 0) {  // Only update history if the summed score is non-zero
+        const newHistoryGroup1 = {
+            time: now,
+            name: "Summed Emotion Score Group 1",
+            score: summedScoreGroup1
+        };
+        setEmotionsHistoryGroup1(prev => [...prev, newHistoryGroup1]);
+    }
+
+    // Handle the second group of relevant emotions
+    const determinationEmotion = emotions.find(emotion => emotion.name === "Determination");
+    const excitementEmotion = emotions.find(emotion => emotion.name === "Excitement");
+    const interestEmotion = emotions.find(emotion => emotion.name === "Interest");
+    
+    let summedScoreGroup2 = 0;
+    if (determinationEmotion?.score) summedScoreGroup2 += determinationEmotion.score;   // Safely access with optional chaining
+    if (excitementEmotion?.score) summedScoreGroup2 += excitementEmotion.score;         // Safely access with optional chaining
+    if (interestEmotion?.score) summedScoreGroup2 += interestEmotion.score;             // Safely access with optional chaining
+
+    if (summedScoreGroup2 > 0) {  // Only update history if the summed score is non-zero
+        const newHistoryGroup2 = {
+            time: now,
+            name: "Summed Emotion Score Group 2",
+            score: summedScoreGroup2
+        };
+        setEmotionsHistoryGroup2(prev => [...prev, newHistoryGroup2]);
+    }
+
+    // Handle the third group of relevant emotions (Vocal Poise)
+const calmnessEmotion = emotions.find(emotion => emotion.name === "Calmness");
+const confidenceEmotion = emotions.find(emotion => emotion.name === "Pride");
+
+let summedScoreGroup3 = 0;
+if (calmnessEmotion?.score) summedScoreGroup3 += calmnessEmotion.score;
+if (confidenceEmotion?.score) summedScoreGroup3 += confidenceEmotion.score;
+
+if (summedScoreGroup3 > 0) {
+    const newHistoryGroup3 = {
         time: now,
-        name: emotion.name,
-        score: emotion.score
-    }));
-    setEmotionsHistory(prev => [...prev, ...newHistory]);
-  }, [emotions]);
+        name: "Summed Emotion Score Group 3",
+        score: summedScoreGroup3
+    };
+    setEmotionsHistoryGroup3(prev => [...prev, newHistoryGroup3]);
+}
+
+// Handle the fourth group of relevant emotions (Vocal Apathy)
+const boredomEmotion = emotions.find(emotion => emotion.name === "Boredom");
+const tirednessEmotion = emotions.find(emotion => emotion.name === "Tiredness");
+const disappointmentEmotion = emotions.find(emotion => emotion.name === "Disappointment");
+// const awkwardnessEmotion = emotions.find(emotion => emotion.name === "Awkwardness");
+
+let summedScoreGroup4 = 0;
+if (boredomEmotion?.score) summedScoreGroup4 += boredomEmotion.score;
+if (tirednessEmotion?.score) summedScoreGroup4 += tirednessEmotion.score;
+if (disappointmentEmotion?.score) summedScoreGroup4 += disappointmentEmotion.score;
+// if (awkwardnessEmotion?.score) summedScoreGroup4 += awkwardnessEmotion.score;
+
+if (summedScoreGroup4 > 0) {
+    const newHistoryGroup4 = {
+        time: now,
+        name: "Summed Emotion Score Group 4",
+        score: summedScoreGroup4
+    };
+    setEmotionsHistoryGroup4(prev => [...prev, newHistoryGroup4]);
+}
+
+}, [emotions]);
+
+
+function transformEmotionsToChartData(
+  emotionsHistory1: { time: string; name: string; score: number; }[],
+  emotionsHistory2: { time: string; name: string; score: number; }[],
+  emotionsHistory3: { time: string; name: string; score: number; }[],
+  emotionsHistory4: { time: string; name: string; score: number; }[]
+): ChartDataShape {
+    const labelsGroup1 = emotionsHistory1.map(e => [e.time]);
+    const dataGroup1 = emotionsHistory1.map(e => e.score);
+
+    const labelsGroup2 = emotionsHistory2.map(e => [e.time]);
+    const dataGroup2 = emotionsHistory2.map(e => e.score);
+
+    const labelsGroup3 = emotionsHistory3.map(e => [e.time]);
+    const dataGroup3 = emotionsHistory3.map(e => e.score);
+
+    const labelsGroup4 = emotionsHistory4.map(e => [e.time]);
+    const dataGroup4 = emotionsHistory4.map(e => e.score);
+
+    return {
+      labels: labelsGroup1,
+      datasets: [
+        {
+          label: 'Discomfort',
+          data: dataGroup1,
+          borderColor: 'rgb(255, 0, 0)',
+          backgroundColor: 'rgba(255, 0, 0, 0.5)',
+        },
+        {
+          label: 'Vigor',
+          data: dataGroup2,
+          borderColor: 'rgb(255,255,204)',
+          backgroundColor: 'rgba(255,255,204, 0.5)',
+        },
+        {
+          label: 'Poise',
+          data: dataGroup3,
+          borderColor: 'rgb(0,128,0)',
+          backgroundColor: 'rgba(0,128,0, 0.5)',
+        },
+        {
+          label: 'Apathy',
+          data: dataGroup4,
+          borderColor: 'rgb(0,0,255)',
+          backgroundColor: 'rgba(0,0,255, 0.5)',
+        }
+      ]
+    };
+    
+}
+
 
   useEffect(() => {
     mountRef.current = true;
@@ -137,20 +271,6 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
       serverReadyRef.current = true;
     }
   }
-
-  function transformEmotionsToChartData(emotionsHistory: { time: string; name: string; score: number; }[]): ChartDataShape {
-    const labels = emotionsHistory.map(e => [e.time]);  // Wrap the time in an array
-    const data = emotionsHistory.map(e => e.score);
-
-    return {
-        labels: labels,
-        datasets: [{
-            label: 'Emotion Score',
-            data: data,
-        }]
-    };
-}
-
 
   async function socketOnClose(event: CloseEvent) {
     console.log("Socket closed");
