@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Hume AI | Sandbox</title>
+        <title>Interview Trainer</title>
         <meta name="title" content="Hume AI | Sandbox" />
         <meta name="description" content="Hume Sandbox" />
         <link rel="icon" href="/favicon.ico" />
