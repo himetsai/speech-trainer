@@ -15,9 +15,15 @@ import { getApiUrlWs } from "../../lib/utilities/environmentUtilities";
 
 type FaceWidgetsProps = {
   onCalibrate: Optional<(emotions: Emotion[]) => void>;
+  recording?: boolean;
+  setEmotionSnapshots?: React.Dispatch<React.SetStateAction<Emotion[][]>>;
 };
 
-export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
+export function FaceWidgets({
+  onCalibrate,
+  recording,
+  setEmotionSnapshots,
+}: FaceWidgetsProps) {
   const authContext = useContext(AuthContext);
   const socketRef = useRef<WebSocket | null>(null);
   const recorderRef = useRef<VideoRecorder | null>(null);
@@ -122,6 +128,10 @@ export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
     await capturePhoto();
   }
 
+  useEffect(() => {
+    if (recording)  setEmotionSnapshots!((prevItems) => [...prevItems, emotions]);
+  }, [recording, emotions]);
+
   async function socketOnClose(event: CloseEvent) {
     console.log("Socket closed");
 
@@ -178,7 +188,10 @@ export function FaceWidgets({ onCalibrate }: FaceWidgetsProps) {
     if (!recorderRef.current && recorderCreated.current === false) {
       console.log("No recorder yet, creating one now");
       recorderCreated.current = true;
-      const recorder = await VideoRecorder.create(videoElement, photoRef.current);
+      const recorder = await VideoRecorder.create(
+        videoElement,
+        photoRef.current
+      );
 
       recorderRef.current = recorder;
       const socket = socketRef.current;
