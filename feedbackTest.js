@@ -64,15 +64,49 @@ import('node-fetch').then(module => {
 
         .then((data) => console.log(data))
         .catch((error) => console.error("Error:", error));
+
+    }
+
+    //get TTS audio from elevenlabs API
+    const fetchTTS = (text_reply) => {
+        const url = "http://10.42.130.71:5000/api/text-to-speech";
+        const data = {
+            "text_reply": text_reply
+        };
+
+        // Make a POST request
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        })
+        .then((response) => {
+          if (!response.ok) {
+              // Log the response content if there's an error
+              return response.text().then(text => {
+                  throw new Error(`HTTP error! Status: ${response.status}, Body: ${text}`);
+              });
+          }
+          return response.json();
+        })
+
+        .then((data) => console.log(data))
+        .catch((error) => console.error("Error:", error));
+
     }
 
     const answer = "My last internship I was working on validating optical flow technology in UAVs because my company was trying to navigate in GPS denied environments, and we wanted a localization solution. As an intern I tested optical flow sensors, did data analysis in MATLAB, and solved engineering problems to solve various challenges that popped up as I was implemented the sensors with our software and using them for navigation. I learned about validating and experi - validating my hypotheses and asking better questions, as well as presentation skills and how to tackle difficult or unknown engineering problems.";
 
     const filepath = "New_Recording.mp3"
 
+    const text_reply = "Hey baby drop it to the floor come on make it move"
+
     // Call your function
     fetchFeedback(answer);
     fetchSTT(filepath);
+    // fetchTTS(text_reply);
 
 }).catch(error => {
     console.error("Failed to dynamically import node-fetch:", error);
