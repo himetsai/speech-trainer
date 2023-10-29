@@ -122,10 +122,10 @@ const VideoRecorder: FC = () => {
   };
 
   const handleScrollToBottom = () => {
-    const target = document.querySelector('.scroll-target');
-    if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-    }
+    window.scrollBy({
+        top: window.innerHeight, // scrolls down by one viewport height
+        behavior: 'smooth'
+    });
 };
 
 
@@ -254,9 +254,7 @@ const VideoRecorder: FC = () => {
             )}
 
             <button
-              className="rounded-lg bg-green-500 p-4 py-2 px-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
-              onClick={handleNewQuestion}
-              disabled={asking}
+              className="rounded-lg bg-green-500 py-2 px-4 p-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
             >
               New Question
             </button>
@@ -285,8 +283,21 @@ const VideoRecorder: FC = () => {
           {/* <ProsodyWidgets /> */}
         </div>
       )}
-    </div>
-  );
+                <div className="absolute bottom-5 w-full flex justify-center">
+                    <div className="flex flex-row justify-center items-center cursor-pointer" onClick={handleScrollToBottom}>
+                        <p className="text-sm text-gray-500">Show my insights</p>
+                        <svg className="ml-2 w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd" d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/>
+                        </svg>
+                    </div>
+                </div>
+
+            {/* The empty space with the AudioWidgets */}
+            <div className="container mx-auto py-8 mt-20 border border-black">
+                    <AudioWidgets modelName="prosody" recordingLengthMs={500} streamWindowLengthMs={2000} />
+                </div>
+        </div>
+    );
 };
 
 export default VideoRecorder;

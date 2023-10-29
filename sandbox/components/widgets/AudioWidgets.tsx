@@ -468,8 +468,10 @@ function transformEmotionsToChartData(
     width: '50%',
     display: 'inline-block',
     boxSizing: 'border-box',
-    padding: '0 15px'
-};
+    padding: '0 15px',
+    height: '200px'  // Example height
+  };
+  
 
   return (
     <div>
