@@ -17,6 +17,8 @@ const VideoRecorder: FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [livecam, setLiveCam] = useState<boolean>(true);
   const [blob, setBlob] = useState<Blob | null>(null);
+  const [time, setTime] = useState<number>(30);
+  const [showtime, setShowTime] = useState<boolean>(false);
   const [EmotionSnapshots, setEmotionSnapshots] = useState<Emotion[][]>([]);
 
   useEffect(() => {
@@ -93,6 +95,7 @@ const VideoRecorder: FC = () => {
       mediaRecorder.start();
       setRecording(true);
       setLiveCam(true);
+      setTime(30);
     }
     if (audioRecorder) {
       audioRecorder.start();
@@ -111,6 +114,23 @@ const VideoRecorder: FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (recording && time > 0) {
+      // Run a timer that decrements the time every second
+      const timerId = setInterval(() => {
+        setTime((prevTime) => prevTime - 1);
+      }, 1000);
+
+      // Clear the interval when the component is unmounted, or the time reaches 0
+      return () => clearInterval(timerId);
+    }
+
+    if (time === 0) {
+      // Stop recording when the time reaches 0
+      stopRecording();
+    }
+  }, [recording, time]);
+
   return (
     <div className="container mx-auto flex h-full py-8">
       {loading ? (
@@ -120,13 +140,46 @@ const VideoRecorder: FC = () => {
           </div>
         </div>
       ) : (
-        <div className="flex w-full h-full flex-col items-center py-10">
+        <div className="flex h-full w-full flex-col items-center pb-4">
           <div className="">
             {livecam ? (
-              <FaceWidgets
-                recording={recording}
-                setEmotionSnapshots={setEmotionSnapshots}
-              />
+              <div className="flex flex-col">
+                <div className="flex h-16 justify-center text-5xl font-bold">
+                  {recording && <h1>{time}</h1>}
+                </div>
+                <FaceWidgets
+                  recording={recording}
+                  setEmotionSnapshots={setEmotionSnapshots}
+                />
+                {/* Button */}
+                <div className="container flex w-full flex-row justify-center space-x-3 text-center">
+                  {recording ? (
+                    <button
+                      className="flex w-full items-center justify-center rounded-md bg-red-500 font-bold text-white hover:bg-red-600"
+                      onClick={stopRecording}
+                    >
+                      <text className="flex h-full w-full items-center justify-center">
+                        Stop Recording
+                      </text>
+                    </button>
+                  ) : (
+                    <button
+                      className="flex w-full rounded-md bg-blue-500 font-bold text-white hover:bg-blue-600"
+                      onClick={startRecording}
+                    >
+                      <text className="flex h-full w-full items-center justify-center">
+                        Start Recording
+                      </text>
+                    </button>
+                  )}
+
+                  <button className="flex h-12 w-full rounded-md bg-green-500 font-bold text-white hover:bg-green-600">
+                    <text className="flex h-full w-full items-center justify-center">
+                      New Question
+                    </text>
+                  </button>
+                </div>
+              </div>
             ) : (
               <div>
                 {blob && (
@@ -134,7 +187,7 @@ const VideoRecorder: FC = () => {
                     width="480"
                     height="320"
                     src={URL.createObjectURL(blob)}
-                    className="pb-10"
+                    className="rounded-md pb-10"
                     controls
                   ></video>
                 )}
@@ -142,32 +195,7 @@ const VideoRecorder: FC = () => {
             )}
           </div>
 
-        <div className="container flex flex-row justify-center">
-
-            {recording ? (
-              <button
-                className="rounded-lg bg-red-500 py-2 px-4 p-4 font-bold text-white hover:bg-red-600 lg:w-1/5"
-                onClick={stopRecording}
-              >
-                Stop Recording
-              </button>
-            ) : (
-              <button
-                className="rounded-lg bg-blue-500 py-2 px-4 p-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
-                onClick={startRecording}
-              >
-                Start Recording
-              </button>
-            )}
-  
-            <button
-              className="rounded-lg bg-green-500 py-2 px-4 p-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
-            >
-              New Question
-            </button>
-
-        </div>
-        {/* {blob && !recording && (
+          {/* {blob && !recording && (
           <video src={URL.createObjectURL(blob)} controls></video>
         )} */}
           {/* <ProsodyWidgets /> */}

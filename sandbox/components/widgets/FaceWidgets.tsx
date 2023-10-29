@@ -244,7 +244,7 @@ export function FaceWidgets({
     <div>
       <div className="md:flex">
         <FaceTrackedVideo
-          className="mb-6"
+          className="mb-5"
           onVideoReady={onVideoReady}
           trackedFaces={trackedFaces}
           width={500}
