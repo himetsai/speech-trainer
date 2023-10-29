@@ -263,6 +263,8 @@ export function FaceWidgets({
           </div>
         )} */}
 
+      </div>
+
       <div className="pt-6 pb-6">{status}</div></div>
         
       <canvas className="hidden" ref={photoRef}></canvas>
