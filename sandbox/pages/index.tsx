@@ -13,6 +13,7 @@ const VideoRecorder: FC = () => {
     null
   );
   const [recording, setRecording] = useState<boolean>(false);
+  const [livecam, setLiveCam] = useState<boolean>(true);
   const [blob, setBlob] = useState<Blob | null>(null);
   const [EmotionSnapshots, setEmotionSnapshots] = useState<Emotion[][]>([]);
 
@@ -88,6 +89,7 @@ const VideoRecorder: FC = () => {
     if (mediaRecorder) {
       mediaRecorder.start();
       setRecording(true);
+      setLiveCam(true);
     }
     if (audioRecorder) {
       audioRecorder.start();
@@ -98,6 +100,7 @@ const VideoRecorder: FC = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
       setRecording(false);
+      setLiveCam(false);
       setEmotionSnapshots([]);
     }
     if (audioRecorder) {
@@ -106,20 +109,49 @@ const VideoRecorder: FC = () => {
   };
 
   return (
-    <div>
-      <FaceWidgets
-        recording={recording}
-        setEmotionSnapshots={setEmotionSnapshots}
-      />
-      {/* <ProsodyWidgets recording={recording} /> */}
-      {recording ? (
-        <button onClick={stopRecording}>Stop Recording</button>
-      ) : (
-        <button onClick={startRecording}>Start Recording</button>
-      )}
-      {blob && !recording && (
-        <video src={URL.createObjectURL(blob)} controls></video>
-      )}
+    <div className="container mx-auto py-8">
+      <div className="flex flex-col items-center py-10">
+        <div className="">
+          {livecam ? (
+            <FaceWidgets
+              recording={recording}
+              setEmotionSnapshots={setEmotionSnapshots}
+            />
+          ) : (
+            <div>
+              {blob && (
+                <video
+                  width="480"
+                  height="320"
+                  src={URL.createObjectURL(blob)}
+                  className="pb-10"
+                  controls
+                ></video>
+              )}
+            </div>
+          )}
+        </div>
+
+        {recording ? (
+          <button
+            className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+            onClick={stopRecording}
+          >
+            Stop Recording
+          </button>
+        ) : (
+          <button
+            className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+            onClick={startRecording}
+          >
+            Start Recording
+          </button>
+        )}
+        {/* {blob && !recording && (
+          <video src={URL.createObjectURL(blob)} controls></video>
+        )} */}
+        {/* <ProsodyWidgets /> */}
+      </div>
     </div>
   );
 };
