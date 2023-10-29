@@ -9,21 +9,28 @@ export function Nav() {
     <div>
       <div className="flex w-full items-center justify-between px-10 py-0 md:w-auto md:rounded-full">
         <img src="/wordart.png" alt="logo" width={200} />
-        <img 
+        <img
           src="/info.png"
-          alt="Info" 
-          className="absolute top-4 right-4 cursor-pointer w-8 h-8" 
+          alt="Info"
+          className="absolute top-4 right-4 h-8 w-8 cursor-pointer"
           onClick={() => setShowInfoModal(true)}
         />
         <div className="hidden text-xs md:block lg:text-sm"></div>
       </div>
 
+      
+
       {showInfoModal && (
-        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded">
-            <h2 className="text-xl font-bold mb-2">About This Site</h2>
+        <div className="fixed top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded bg-white p-4">
+            <h2 className="mb-2 text-xl font-bold">About This Site</h2>
             <p>Some information about the site...</p>
-            <button onClick={() => setShowInfoModal(false)} className="mt-4 p-2 bg-blue-500 text-white rounded">Close</button>
+            <button
+              onClick={() => setShowInfoModal(false)}
+              className="mt-4 rounded bg-blue-500 p-2 text-white"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
@@ -32,7 +39,6 @@ export function Nav() {
     </div>
   );
 }
-
 
 type NavItemProps = {
   route: string;
