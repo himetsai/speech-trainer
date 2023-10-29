@@ -24,7 +24,10 @@ Chart.register(
 );
 
 
+
 import EmotionTimeline from "./EmotionTimeline";  // Adjust path accordingly
+import EngagementTimeline from "./EngagementTimeline";
+import EmotionRadar from "./EmotionRadar";
 
 
 interface AudioWidgetsProps {
@@ -44,21 +47,31 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
   const serverReadyRef = useRef(true);
   const [predictions, setPredictions] = useState<AudioPrediction[]>([]);
   const [status, setStatus] = useState("");
-  const maxReconnects = 3;
+  const maxReconnects = 10;
 
   const emotions = predictions.length == 0 ? [] : predictions[0].emotions;
-  
 
-  const [emotionsHistory, setEmotionsHistory] = useState<{time: string, name: string, score: number}[]>([]);
+  // const [emotionsHistory, setEmotionsHistory] = useState<{time: string, name: string, score: number}[]>([]);
 
   const [emotionsHistoryGroup1, setEmotionsHistoryGroup1] = useState<{time: string, name: string, score: number}[]>([]);
   const [emotionsHistoryGroup2, setEmotionsHistoryGroup2] = useState<{time: string, name: string, score: number}[]>([]);
   const [emotionsHistoryGroup3, setEmotionsHistoryGroup3] = useState<{time: string, name: string, score: number}[]>([]);
   const [emotionsHistoryGroup4, setEmotionsHistoryGroup4] = useState<{time: string, name: string, score: number}[]>([]);
 
+  const radarData = transformToRadarData(
+    emotionsHistoryGroup1,
+    emotionsHistoryGroup2,
+    emotionsHistoryGroup3,
+    emotionsHistoryGroup4
+  );
+
+  const [engagementHistory, setEngagementHistory] = useState<{time: string, score: number}[]>([]);
 
   const chartData = transformEmotionsToChartData(emotionsHistoryGroup1, emotionsHistoryGroup2, emotionsHistoryGroup3, emotionsHistoryGroup4);
   console.log(chartData);
+
+  const engagementChartData = transformEngagementToChartData(engagementHistory);
+  console.log(engagementChartData);
 
   type ChartDataShape = ChartData<'line', number[], string[]>;  // Note the added extra array in string[][]
 
@@ -70,34 +83,58 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
     const doubtEmotion = emotions.find(emotion => emotion.name === "Doubt");
     const distressEmotion = emotions.find(emotion => emotion.name === "Distress");
     const awkwardnessEmotion = emotions.find(emotion => emotion.name === "Awkwardness");
-
-    
+    const confusionEmotion = emotions.find(emotion => emotion.name === "Confusion");
     let summedScoreGroup1 = 0;
     if (anxietyEmotion?.score) summedScoreGroup1 += anxietyEmotion.score;    // Safely access with optional chaining
     if (doubtEmotion?.score) summedScoreGroup1 += doubtEmotion.score;        // Safely access with optional chaining
     if (distressEmotion?.score) summedScoreGroup1 += distressEmotion.score;  // Safely access with optional chaining
     if (awkwardnessEmotion?.score) summedScoreGroup1 += awkwardnessEmotion.score;
+    if (confusionEmotion?.score) summedScoreGroup1 += confusionEmotion.score;
 
     if (summedScoreGroup1 > 0) {  // Only update history if the summed score is non-zero
+      summedScoreGroup1 = summedScoreGroup1* summedScoreGroup1 * 2;
         const newHistoryGroup1 = {
             time: now,
             name: "Summed Emotion Score Group 1",
             score: summedScoreGroup1
         };
+
         setEmotionsHistoryGroup1(prev => [...prev, newHistoryGroup1]);
+
+        const newLastScoreGroup1 = summedScoreGroup1;
+        const lastScoreGroup2 = emotionsHistoryGroup2.length > 0 ? emotionsHistoryGroup2[emotionsHistoryGroup2.length - 1].score : 0;
+        const lastScoreGroup3 = emotionsHistoryGroup3.length > 0 ? emotionsHistoryGroup3[emotionsHistoryGroup3.length - 1].score : 0;
+        const lastScoreGroup4 = emotionsHistoryGroup4.length > 0 ? emotionsHistoryGroup4[emotionsHistoryGroup4.length - 1].score : 0;
+        
+        const engagementScore = (lastScoreGroup2 + lastScoreGroup3) - (newLastScoreGroup1 + lastScoreGroup4);
+        
+        // const engagementScore = 1;
+
+    
+        // if (engagementScore !== 0) {  // Only update history if the engagement score is non-zero
+            setEngagementHistory(prev => [...prev, {time: now, score: engagementScore}]);
+        // }
     }
 
     // Handle the second group of relevant emotions
-    const determinationEmotion = emotions.find(emotion => emotion.name === "Determination");
     const excitementEmotion = emotions.find(emotion => emotion.name === "Excitement");
     const interestEmotion = emotions.find(emotion => emotion.name === "Interest");
+    const prideEmotion = emotions.find(emotion => emotion.name === "Pride");
+    const admirationEmotion = emotions.find(emotion => emotion.name === "Admiration");
+    const realizationEmotion = emotions.find(emotion => emotion.name === "Realization");
+    const surprisePositiveEmotion = emotions.find(emotion => emotion.name === "Surprise (positive)");
     
     let summedScoreGroup2 = 0;
-    if (determinationEmotion?.score) summedScoreGroup2 += determinationEmotion.score;   // Safely access with optional chaining
     if (excitementEmotion?.score) summedScoreGroup2 += excitementEmotion.score;         // Safely access with optional chaining
-    if (interestEmotion?.score) summedScoreGroup2 += interestEmotion.score;             // Safely access with optional chaining
-
+    if (interestEmotion?.score) summedScoreGroup2 += interestEmotion.score;       
+    if (prideEmotion?.score) summedScoreGroup2 += prideEmotion.score;                   // Safely access with optional chaining
+    if (admirationEmotion?.score) summedScoreGroup2 += admirationEmotion.score;         // Safely access with optional chaining
+    if (realizationEmotion?.score) summedScoreGroup2 += realizationEmotion.score;       // Safely access with optional chaining
+    if (surprisePositiveEmotion?.score) summedScoreGroup2 += surprisePositiveEmotion.score; // Safely access with optional chaining
+    
     if (summedScoreGroup2 > 0) {  // Only update history if the summed score is non-zero
+      summedScoreGroup2 = summedScoreGroup2* summedScoreGroup2;
+
         const newHistoryGroup2 = {
             time: now,
             name: "Summed Emotion Score Group 2",
@@ -107,14 +144,24 @@ export function AudioWidgets({ modelName, recordingLengthMs, streamWindowLengthM
     }
 
     // Handle the third group of relevant emotions (Vocal Poise)
-const calmnessEmotion = emotions.find(emotion => emotion.name === "Calmness");
-const confidenceEmotion = emotions.find(emotion => emotion.name === "Pride");
-
-let summedScoreGroup3 = 0;
-if (calmnessEmotion?.score) summedScoreGroup3 += calmnessEmotion.score;
-if (confidenceEmotion?.score) summedScoreGroup3 += confidenceEmotion.score;
+    const calmnessEmotion = emotions.find(emotion => emotion.name === "Calmness");
+    const satisfactionEmotion = emotions.find(emotion => emotion.name === "Satisfaction");
+    const contemplationEmotion = emotions.find(emotion => emotion.name === "Contemplation");
+    const concentrationEmotion = emotions.find(emotion => emotion.name === "Concentration");
+    const amusementEmotion = emotions.find(emotion => emotion.name === "Amusement");
+    const determinationEmotion = emotions.find(emotion => emotion.name === "Determination");
+    
+    let summedScoreGroup3 = 0;
+    if (calmnessEmotion?.score) summedScoreGroup3 += calmnessEmotion.score;
+    if (satisfactionEmotion?.score) summedScoreGroup3 += satisfactionEmotion.score;
+    if (contemplationEmotion?.score) summedScoreGroup3 += contemplationEmotion.score;
+    if (concentrationEmotion?.score) summedScoreGroup3 += concentrationEmotion.score;
+    if (amusementEmotion?.score) summedScoreGroup3 += amusementEmotion.score;
+    if (determinationEmotion?.score) summedScoreGroup3 += determinationEmotion.score;
 
 if (summedScoreGroup3 > 0) {
+  summedScoreGroup3 = summedScoreGroup3* summedScoreGroup3;
+
     const newHistoryGroup3 = {
         time: now,
         name: "Summed Emotion Score Group 3",
@@ -127,15 +174,18 @@ if (summedScoreGroup3 > 0) {
 const boredomEmotion = emotions.find(emotion => emotion.name === "Boredom");
 const tirednessEmotion = emotions.find(emotion => emotion.name === "Tiredness");
 const disappointmentEmotion = emotions.find(emotion => emotion.name === "Disappointment");
-// const awkwardnessEmotion = emotions.find(emotion => emotion.name === "Awkwardness");
 
 let summedScoreGroup4 = 0;
 if (boredomEmotion?.score) summedScoreGroup4 += boredomEmotion.score;
 if (tirednessEmotion?.score) summedScoreGroup4 += tirednessEmotion.score;
 if (disappointmentEmotion?.score) summedScoreGroup4 += disappointmentEmotion.score;
-// if (awkwardnessEmotion?.score) summedScoreGroup4 += awkwardnessEmotion.score;
+if (confusionEmotion?.score) summedScoreGroup4 += confusionEmotion.score;
+if (contemplationEmotion?.score) summedScoreGroup4 += contemplationEmotion.score;
+
 
 if (summedScoreGroup4 > 0) {
+  summedScoreGroup4 = summedScoreGroup4* summedScoreGroup4 * 2;
+
     const newHistoryGroup4 = {
         time: now,
         name: "Summed Emotion Score Group 4",
@@ -145,6 +195,54 @@ if (summedScoreGroup4 > 0) {
 }
 
 }, [emotions]);
+
+function transformToRadarData(
+  group1: Array<{ time: string; score: number }>,
+  group2: Array<{ time: string; score: number }>,
+  group3: Array<{ time: string; score: number }>,
+  group4: Array<{ time: string; score: number }>
+): ChartData<'radar', number[], string> {
+  const labels = ['Discomfort', 'Vigor', 'Poise', 'Apathy']; 
+
+  const dataPoints = [
+    Math.sqrt(group1.reduce((acc, curr) => acc + curr.score, 0)),
+    Math.sqrt(group2.reduce((acc, curr) => acc + curr.score, 0)),
+    Math.sqrt(group3.reduce((acc, curr) => acc + curr.score, 0)),
+    Math.sqrt(group4.reduce((acc, curr) => acc + curr.score, 0)),
+  ];
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Emotion Scores',
+        data: dataPoints,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+}
+
+function transformEngagementToChartData(
+  engagementHistory: { time: string; score: number; }[]
+): ChartDataShape {
+    const labels = engagementHistory.map(e => [e.time]);
+    const data = engagementHistory.map(e => e.score >= 0 ? Math.sqrt(e.score) : e.score);
+
+    return {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Engagement',
+          data: data,
+          borderColor: 'rgb(128, 128, 128)',
+          backgroundColor: 'rgba(128, 128, 128, 0.5)',
+        }
+      ]
+    };
+}
 
 
 function transformEmotionsToChartData(
@@ -164,33 +262,52 @@ function transformEmotionsToChartData(
 
     const labelsGroup4 = emotionsHistory4.map(e => [e.time]);
     const dataGroup4 = emotionsHistory4.map(e => e.score);
-
     return {
       labels: labelsGroup1,
       datasets: [
         {
-          label: 'Discomfort',
+          label: 'Discomfort', 
           data: dataGroup1,
-          borderColor: 'rgb(255, 0, 0)',
-          backgroundColor: 'rgba(255, 0, 0, 0.5)',
+          borderColor: 'rgba(111, 218, 232, 0.5)', // Changed to a unique color
+          backgroundColor: 'rgba(111, 218, 232, 0.5)', // Adjusted to a 0.5 opacity version
+          pointBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#000000',
+          pointHoverBackgroundColor: '#000000',
+
         },
         {
-          label: 'Vigor',
+          label: 'Vigor', 
           data: dataGroup2,
-          borderColor: 'rgb(255,255,204)',
-          backgroundColor: 'rgba(255,255,204, 0.5)',
+          borderColor: 'rgba(59, 252, 109, 0.5)', // Changed to a unique color
+          backgroundColor: 'rgba(51,255,87, 0.5)', // Adjusted to a 0.5 opacity version
+          pointBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#000000',
+          pointHoverBackgroundColor: '#000000',
+
         },
         {
           label: 'Poise',
           data: dataGroup3,
-          borderColor: 'rgb(0,128,0)',
-          backgroundColor: 'rgba(0,128,0, 0.5)',
+          borderColor: 'rgba(192, 128, 232, 0.5)', // Changed to a unique color
+          backgroundColor: 'rgba(192, 128, 232, 0.5)', // Adjusted to a 0.5 opacity version
+          pointBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#000000',
+          pointHoverBackgroundColor: '#000000',
+
         },
         {
-          label: 'Apathy',
+          label: 'Apathy', 
           data: dataGroup4,
-          borderColor: 'rgb(0,0,255)',
-          backgroundColor: 'rgba(0,0,255, 0.5)',
+          borderColor: 'rgba(51,87,255, 0.5)', // Changed to a unique color
+          backgroundColor: 'rgba(51,87,255, 0.5)', // Adjusted to a 0.5 opacity version
+          pointBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2,
+          pointHoverBorderColor: '#000000',
+          pointHoverBackgroundColor: '#000000',
+
         }
       ]
     };
@@ -348,16 +465,31 @@ function transformEmotionsToChartData(
     }
   }
 
+  const chartContainerStyle: React.CSSProperties = {
+    width: '50%',
+    display: 'inline-block',
+    boxSizing: 'border-box',
+    padding: '0 15px'
+};
+
   return (
     <div>
       <div className="md:flex">
-        {!onTimeline && <TopEmotions emotions={emotions} />}
+        {/* {!onTimeline && <TopEmotions emotions={emotions} />} */}
         {onTimeline && (
           <div className="ml-10">
             <DiscreteTimeline predictions={predictions} />
           </div>
         )}
-        <EmotionTimeline data={chartData} />
+      <div style={chartContainerStyle}>
+        <EmotionRadar data={radarData} />
+      </div>
+        <div style={chartContainerStyle}>
+          <EngagementTimeline data={engagementChartData} />
+        </div>
+        <div style={chartContainerStyle}>
+          <EmotionTimeline data={chartData} />
+        </div>
       </div>
 
       <div>{status}</div>
