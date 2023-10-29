@@ -222,8 +222,8 @@ const VideoRecorder: FC = () => {
                 <div className="container flex w-full flex-row justify-center space-x-3 pt-10 text-center">
                   {recording ? (
                     <button
-                      className="flex w-full max-w-[300px] items-center justify-center rounded-md bg-red-500
-                       font-bold text-white hover:bg-red-600 "
+                      className="flex w-full max-w-[300px] items-center justify-center rounded-md border-2
+                       border-black bg-red-500 font-bold text-white hover:bg-red-600"
                       onClick={stopRecording}
                     >
                       <text className="flex h-full w-full items-center justify-center">
@@ -292,6 +292,17 @@ const VideoRecorder: FC = () => {
               <div
                 className="flex items-center justify-center rounded-md border-2 border-black bg-[#FFFAF0] py-5 px-20"
                 onClick={() => {
+                  const mediaElements: NodeListOf<
+                    HTMLAudioElement | HTMLVideoElement
+                  > = document.querySelectorAll("audio");
+
+                  // Pause and reset each media element
+                  mediaElements.forEach(
+                    (media: HTMLAudioElement | HTMLVideoElement) => {
+                      media.pause();
+                      media.currentTime = 0; // Optional: reset playback to the start
+                    }
+                  );
                   setDone(false);
                   setBlob(null);
                   setLiveCam(true);
