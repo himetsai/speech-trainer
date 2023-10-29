@@ -26,6 +26,14 @@ const VideoRecorder: FC = () => {
   const [question, setQuestion] = useState<string>("Describe a time when you faced a significant challenge at work. How did you handle it?");
   const [asking, setAsking] = useState<boolean>(false);
 
+  const feedback = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget purus vel erat lacinia hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in libero ac neque laoreet venenatis. Fusce non felis id justo tincidunt auctor. Sed volutpat tortor eu arcu viverra, id auctor odio consequat. Sed nec orci in massa mattis vehicula. Integer nec dolor vel libero hendrerit iaculis. Proin eu lectus eu libero iaculis fermentum. Sed bibendum odio ac ipsum laoreet bibendum.
+
+  Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed id semper urna, ac convallis justo. Curabitur ac risus at ipsum pellentesque iaculis. Fusce in elit nec ligula vehicula tincidunt. Quisque nec erat eu libero sollicitudin lobortis nec non enim. Duis nec feugiat libero. Sed eu tellus id libero bibendum venenatis. Aliquam erat volutpat. Vivamus lacinia urna a justo ullamcorper, eu tincidunt arcu luctus. Vivamus id massa vel libero lacinia feugiat`;
+
+  const user_said = "This is an example of a paragraph that the user may have said, transcribed by Whisper.";
+  
+  const interviewer_question = "What was a time you had to use time management skills?";
+
   useEffect(() => {
     let chunks: Blob[] = [];
     async function setupMediaRecorder() {
@@ -175,10 +183,10 @@ const VideoRecorder: FC = () => {
           </div>
         </div>
       ) : (
-        <div className="flex h-full w-full flex-col items-center pb-4">
+        <div className="flex h-full w-full flex-col items-center pb-4 bg-green-500">
           <div className="">
             {livecam ? (
-              <div className="flex flex-col">
+              <div className="flex flex-col bg-red-500">
                 <div className="flex h-16 justify-center text-5xl font-bold">
                   {recording && <h1>{time}</h1>}
                 </div>
@@ -233,6 +241,24 @@ const VideoRecorder: FC = () => {
                 )}
               </div>
             )}
+          </div>
+
+          {/* Summary */}
+          <div className="container mx-auto mt-8">
+            <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-1 bg-red-200 p-4">
+                  <p>This is the first column.</p>
+                </div>
+                
+                <div className="col-span-1 bg-blue-300 p-4">
+                  <p><span className="font-black">Question:</span> {interviewer_question}</p>
+                  <div className="mt-4"/>
+                  <p><span className="font-black">You said:</span> {user_said}</p>
+                  <div className="mt-4"/>
+                  <p><span className="font-black">Interview feedback:</span> {feedback}</p>
+                </div>
+                
+            </div>
           </div>
 
           {/* <div className="container flex flex-row justify-center">
