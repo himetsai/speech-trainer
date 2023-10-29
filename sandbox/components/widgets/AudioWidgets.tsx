@@ -24,7 +24,6 @@ Chart.register(
 );
 
 
-
 import EmotionTimeline from "./EmotionTimeline";  // Adjust path accordingly
 import EngagementTimeline from "./EngagementTimeline";
 import EmotionRadar from "./EmotionRadar";
