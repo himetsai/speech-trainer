@@ -73,7 +73,8 @@ const VideoRecorder: FC = () => {
         const feedbackUrl = await fetchTTS(
           "http://127.0.0.1:5000/api/text-to-speech",
           feedback,
-          "Bella"
+          "Bella",
+          "feedback",
         );
         console.log(feedbackUrl);
         const feedbackSpeech = new Audio(feedbackUrl);

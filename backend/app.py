@@ -67,15 +67,18 @@ def speech_to_text():
     except Exception as e:
         return jsonify({'Error': str(e)}), 500
 
-@app.route('/api/text-to-speech', methods=['POST'])
-def text_to_speech():
+@app.route('/api/text-to-speech/<res_type>', methods=['POST'])
+def text_to_speech(res_type):
     """
     Request format: {"text": "Hello World!", "voice": "Grace"}
     """
     try:
         text, voice = request.json["text"], request.json["voice"]
         audio_bytes = generate(text=text, voice=voice)
-        save(audio_bytes, "feedback.mp3")
+        if res_type == "feedback":
+            save(audio_bytes, "feedback.mp3")
+        elif res_type == "question":
+            save(audio_bytes, "question.mp3")
         return send_file("./feedback.mp3", as_attachment=False)
     except Exception as e:
         return jsonify({'Error': str(e)}), 500
