@@ -1,6 +1,6 @@
 // import fetch from "node-fetch";
 
-export const fetchFeedback = async (url, answer) => {
+export const fetchFeedback = async (url, body) => {
   // Make a POST request
   try {
     const res = await fetch(url, {
@@ -8,7 +8,7 @@ export const fetchFeedback = async (url, answer) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(answer),
+      body: JSON.stringify(body),
     });
     if (!res.ok) {
       // Log the response content if there's an error
