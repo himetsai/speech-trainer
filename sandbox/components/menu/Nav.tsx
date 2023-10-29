@@ -4,11 +4,11 @@ export function Nav() {
   return (
     <div>
       <div className="flex w-full items-center justify-between px-10 py-5 md:w-auto md:rounded-full">
-        <img src="/rhetoric.png" alt="logo" width={200} />
+        <img src="/rhetoric.png" alt="logo" width={150} />
         <div className="hidden text-xs md:block lg:text-sm"></div>
       </div>
 
-      <div className="w-full border-b-2 border-neutral-200"></div>
+      <div className="w-full border-neutral-200"></div>
     </div>
   );
 }

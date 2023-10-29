@@ -3,6 +3,7 @@ import { FaceWidgets } from "../components/widgets/FaceWidgets";
 import { Emotion } from "../lib/data/emotion";
 import { ProsodyWidgets } from "../components/widgets/ProsodyWidgets";
 import { fetchFeedback, fetchSTT, fetchTTS } from "../api.js";
+import Image from "next/image";
 
 const VideoRecorder: FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -13,6 +14,7 @@ const VideoRecorder: FC = () => {
     null
   );
   const [recording, setRecording] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [livecam, setLiveCam] = useState<boolean>(true);
   const [blob, setBlob] = useState<Blob | null>(null);
   const [EmotionSnapshots, setEmotionSnapshots] = useState<Emotion[][]>([]);
@@ -59,9 +61,7 @@ const VideoRecorder: FC = () => {
           type: "audio/wav",
         });
 
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        audio.play();
+        setLoading(true);
 
         const transcript = await fetchSTT(
           "http://127.0.0.1:5000/api/speech-to-text",
@@ -75,8 +75,10 @@ const VideoRecorder: FC = () => {
           "http://127.0.0.1:5000/api/text-to-speech",
           feedback,
           "Bella",
-          "feedback",
+          "feedback"
         );
+
+        setLoading(false);
         console.log(feedbackUrl);
         const feedbackSpeech = new Audio(feedbackUrl);
         feedbackSpeech.play();
@@ -110,49 +112,57 @@ const VideoRecorder: FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      {<div className="flex flex-col items-center py-10">
-        <div className="">
-          {livecam ? (
-            <FaceWidgets
-              recording={recording}
-              setEmotionSnapshots={setEmotionSnapshots}
-            />
-          ) : (
-            <div>
-              {blob && (
-                <video
-                  width="480"
-                  height="320"
-                  src={URL.createObjectURL(blob)}
-                  className="pb-10"
-                  controls
-                ></video>
-              )}
-            </div>
-          )}
+    <div className="container mx-auto flex h-full py-8">
+      {loading ? (
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <div className="spinner items-center justify-center">
+            <Image src="/nerd.webp" alt="" width="200" height="200"></Image>
+          </div>
         </div>
+      ) : (
+        <div className="flex w-full h-full flex-col items-center py-10">
+          <div className="">
+            {livecam ? (
+              <FaceWidgets
+                recording={recording}
+                setEmotionSnapshots={setEmotionSnapshots}
+              />
+            ) : (
+              <div>
+                {blob && (
+                  <video
+                    width="480"
+                    height="320"
+                    src={URL.createObjectURL(blob)}
+                    className="pb-10"
+                    controls
+                  ></video>
+                )}
+              </div>
+            )}
+          </div>
 
-        {recording ? (
-          <button
-            className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
-            onClick={stopRecording}
-          >
-            Stop Recording
-          </button>
-        ) : (
-          <button
-            className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
-            onClick={startRecording}
-          >
-            Start Recording
-          </button>
-        )}
-        {/* {blob && !recording && (
+          {recording ? (
+            <button
+              className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+              onClick={stopRecording}
+            >
+              Stop Recording
+            </button>
+          ) : (
+            <button
+              className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+              onClick={startRecording}
+            >
+              Start Recording
+            </button>
+          )}
+          {/* {blob && !recording && (
           <video src={URL.createObjectURL(blob)} controls></video>
         )} */}
-        {/* <ProsodyWidgets /> */}
-      </div>}
+          {/* <ProsodyWidgets /> */}
+        </div>
+      )}
     </div>
   );
 };
