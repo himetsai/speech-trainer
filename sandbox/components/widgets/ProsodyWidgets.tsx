@@ -9,7 +9,6 @@ export function ProsodyWidgets({ recording }: AudioWidgetsProps) {
     <div>
       <AudioWidgets
         modelName="prosody"
-        recording={recording}
         recordingLengthMs={500}
         streamWindowLengthMs={5000}
       />

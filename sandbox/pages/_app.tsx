@@ -16,15 +16,15 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Interview Trainer</title>
-        <meta name="title" content="Hume AI | Sandbox" />
-        <meta name="description" content="Hume Sandbox" />
+        <meta name="title" content="Rhetoric" />
+        <meta name="description" content="Rhetoric" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-w-screen min-h-screen bg-neutral-100 font-main font-thin text-neutral-800">
+      <div className="flex h-full flex-col bg-neutral-100 font-main font-thin text-neutral-800">
         <Auth>
           <Nav />
-          <div>
+          <div className="flex h-full w-full">
             <Component {...pageProps} />
           </div>
         </Auth>
