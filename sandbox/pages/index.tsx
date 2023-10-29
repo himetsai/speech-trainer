@@ -214,7 +214,7 @@ const VideoRecorder: FC = () => {
                   {recording ? (
                     <button
                       className="flex w-full max-w-[300px] items-center justify-center rounded-md bg-red-500
-                       font-bold text-white hover:bg-red-600"
+                       font-bold text-white hover:bg-red-600 "
                       onClick={stopRecording}
                     >
                       <text className="flex h-full w-full items-center justify-center">
