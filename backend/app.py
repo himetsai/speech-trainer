@@ -40,7 +40,7 @@ def feedback():
     output = together.Complete.create(
         prompt,
         model = "togethercomputer/llama-2-13b-chat", 
-        max_tokens = 256,
+        max_tokens = 128,
         temperature = 0.8,
         top_k = 50,
         top_p = 0.7,
