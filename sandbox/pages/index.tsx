@@ -9,6 +9,16 @@ import { getRandomQuestion } from "../util.js";
 import Image from "next/image";
 
 const VideoRecorder: FC = () => {
+  const feedbackk = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget purus vel erat lacinia hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris in libero ac neque laoreet venenatis. Fusce non felis id justo tincidunt auctor. Sed volutpat tortor eu arcu viverra, id auctor odio consequat. Sed nec orci in massa mattis vehicula. Integer nec dolor vel libero hendrerit iaculis. Proin eu lectus eu libero iaculis fermentum. Sed bibendum odio ac ipsum laoreet bibendum.
+
+  Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed id semper urna, ac convallis justo. Curabitur ac risus at ipsum pellentesque iaculis. Fusce in elit nec ligula vehicula tincidunt. Quisque nec erat eu libero sollicitudin lobortis nec non enim. Duis nec feugiat libero. Sed eu tellus id libero bibendum venenatis. Aliquam erat volutpat. Vivamus lacinia urna a justo ullamcorper, eu tincidunt arcu luctus. Vivamus id massa vel libero lacinia feugiat`;
+
+  const user_said =
+    "This is an example of a paragraph that the user may have said, transcribed by Whisper.";
+
+  const interviewer_question =
+    "What was a time you had to use time management skills?";
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -26,12 +36,12 @@ const VideoRecorder: FC = () => {
   const [question, setQuestion] = useState<string>(
     "Describe a time when you faced a significant challenge at work. How did you handle it?"
   );
-  const [response, setResponse] = useState<string>("");
-  const [critique, setCritique] = useState<string>("");
+  const [response, setResponse] = useState<string>(user_said);
+  const [critique, setCritique] = useState<string>(feedbackk);
   const [asking, setAsking] = useState<boolean>(false);
   // const [showGraph, setShowGraph] = useState(false);
 
-  const [isDone, setDone] = useState<boolean>(false);
+  const [showDone, setDone] = useState<boolean>(false);
 
   useEffect(() => {
     let chunks: Blob[] = [];
@@ -184,7 +194,6 @@ const VideoRecorder: FC = () => {
           <div className="spinner items-center justify-center">
             <Image src="/nerd.webp" alt="" width="200" height="200"></Image>
           </div>
-          <p>Loading...</p>
         </div>
       ) : (
         <div className="flex h-full w-full flex-col items-center">
@@ -254,7 +263,7 @@ const VideoRecorder: FC = () => {
                     width="700"
                     height="300"
                     src={URL.createObjectURL(blob)}
-                    className="rounded-md border-2 border-black"
+                    className="rounded-md"
                     controls
                   ></video>
                 )}
@@ -284,24 +293,17 @@ const VideoRecorder: FC = () => {
               <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
                 <h1 className="py-5 text-4xl font-bold">Question</h1>
                 <p className="text-xl">{question}</p>
-          {isDone && (
-            <div className="mt-16 flex">
-              <div className="grid grid-cols-2">
-                <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
-                  <h1 className="py-5 text-4xl font-bold">Question</h1>
-                  <p className="text-xl">{question}</p>
 
-                  <h1 className="py-5 text-4xl font-bold">Response</h1>
-                  <p className="text-xl">{response}</p>
-                </div>
+                <h1 className="py-5 text-4xl font-bold">Response</h1>
+                <p className="text-xl">{response}</p>
+              </div>
 
-                <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
-                  <h1 className="py-5 text-4xl font-bold">Feedback</h1>
-                  <p className="text-lg">{critique}</p>
-                </div>
+              <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
+                <h1 className="py-5 text-4xl font-bold">Feedback</h1>
+                <p className="text-lg">{critique}</p>
               </div>
             </div>
-          )}
+          </div>
           {/* <div
             className="fixed top-4 right-20"
             onClick={() => setShowGraph(showGraph ? false : true)}
