@@ -11,7 +11,7 @@ import random
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:3001"}})
 
 @app.route('/api/feedback', methods=['POST'])
 def feedback():
@@ -33,7 +33,7 @@ def feedback():
     output = together.Complete.create(
         prompt,
         model = "togethercomputer/llama-2-13b-chat", 
-        max_tokens = 128,
+        max_tokens = 512,
         temperature = 0.8,
         top_k = 50,
         top_p = 0.7,
