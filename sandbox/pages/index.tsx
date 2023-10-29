@@ -192,6 +192,7 @@ const VideoRecorder: FC = () => {
                     <button
                       className="flex w-full rounded-md bg-blue-500 font-bold text-white hover:bg-blue-600"
                       onClick={startRecording}
+                      disabled={asking}
                     >
                       <text className="flex h-full w-full items-center justify-center">
                         Start Recording
@@ -199,7 +200,11 @@ const VideoRecorder: FC = () => {
                     </button>
                   )}
 
-                  <button className="flex h-12 w-full rounded-md bg-green-500 font-bold text-white hover:bg-green-600">
+                  <button
+                    className="flex h-12 w-full rounded-md bg-green-500 font-bold text-white hover:bg-green-600"
+                    disabled={asking}
+                    onClick={handleNewQuestion}
+                  >
                     <text className="flex h-full w-full items-center justify-center">
                       New Question
                     </text>
@@ -221,35 +226,33 @@ const VideoRecorder: FC = () => {
             )}
           </div>
 
-        <div className="container flex flex-row justify-center">
+          {/* <div className="container flex flex-row justify-center">
+            {recording ? (
+              <button
+                className="rounded-lg bg-red-500 p-4 py-2 px-4 font-bold text-white hover:bg-red-600 lg:w-1/5"
+                onClick={stopRecording}
+              >
+                Stop Recording
+              </button>
+            ) : (
+              <button
+                className="rounded-lg bg-blue-500 p-4 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+                onClick={startRecording}
+                disabled={asking}
+              >
+                Start Recording
+              </button>
+            )}
 
-          {recording ? (
             <button
-              className="rounded-lg bg-red-500 py-2 px-4 p-4 font-bold text-white hover:bg-red-600 lg:w-1/5"
-              onClick={stopRecording}
-            >
-              Stop Recording
-            </button>
-          ) : (
-            <button
-              className="rounded-lg bg-blue-500 py-2 px-4 p-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
-              onClick={startRecording}
-              disabled={asking}
-            >
-              Start Recording
-            </button>
-          )}
-
-            <button
-              className="rounded-lg bg-green-500 py-2 px-4 p-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
+              className="rounded-lg bg-green-500 p-4 py-2 px-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
               onClick={handleNewQuestion}
               disabled={asking}
             >
               New Question
             </button>
-
-        </div>
-        {/* {blob && !recording && (
+          </div> */}
+          {/* {blob && !recording && (
           <video src={URL.createObjectURL(blob)} controls></video>
         )} */}
           {/* <ProsodyWidgets /> */}
