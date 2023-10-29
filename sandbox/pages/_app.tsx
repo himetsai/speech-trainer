@@ -15,10 +15,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Interview Trainer</title>
-        <meta name="title" content="Hume AI | Sandbox" />
-        <meta name="description" content="Hume Sandbox" />
-        <link rel="icon" href="/favicon.ico" />
+        <title>Rhetoric - AI Interviewer</title>
+        <meta name="title" content="Rhetoric AI" />
+        <meta name="description" content="Rhetoric AI" />
+        <link rel="icon" href="/rhetoriclogo.png" />
       </Head>
 
       <div className="min-w-screen min-h-screen bg-neutral-100 font-main font-thin text-neutral-800">
@@ -27,7 +27,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <div>
             <Component {...pageProps} />
           </div>
-          <Toolbar />
         </Auth>
       </div>
     </>
