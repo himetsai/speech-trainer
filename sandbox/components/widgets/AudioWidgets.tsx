@@ -557,11 +557,11 @@ export function AudioWidgets({
   };
 
   return (
-    <div className="flex h-full w-[500px] justify-center items-center">
+    <div className="flex h-full w-[500px] items-center justify-center">
       <div className="flex h-full w-full items-center">
         {/* {!onTimeline && <TopEmotions emotions={emotions} />} */}
         {onTimeline && (
-          <div className="ml-10 w-full h-full">
+          <div className="ml-10 h-full w-full">
             <DiscreteTimeline predictions={predictions} />
           </div>
         )}
