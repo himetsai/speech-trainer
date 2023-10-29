@@ -264,7 +264,7 @@ export function FaceWidgets({
         )} */}
       </div>
 
-      <div className="pt-6">{status}</div>
+      {/* <div className="pt-6">{status}</div> */}
       <canvas className="hidden" ref={photoRef}></canvas>
     </div>
   );

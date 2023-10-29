@@ -111,7 +111,7 @@ const VideoRecorder: FC = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <div className="flex flex-col items-center py-10">
+      {<div className="flex flex-col items-center py-10">
         <div className="">
           {livecam ? (
             <FaceWidgets
@@ -152,7 +152,7 @@ const VideoRecorder: FC = () => {
           <video src={URL.createObjectURL(blob)} controls></video>
         )} */}
         {/* <ProsodyWidgets /> */}
-      </div>
+      </div>}
     </div>
   );
 };
