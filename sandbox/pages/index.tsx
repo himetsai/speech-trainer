@@ -133,12 +133,11 @@ const VideoRecorder: FC = () => {
   };
 
   const handleScrollToBottom = () => {
-    window.scrollBy({
-        top: window.innerHeight - 60, // scrolls down by one viewport height
-        behavior: 'smooth'
-    });
-};
-
+    const target = document.querySelector(".scroll-target");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     if (recording && time > 0) {
@@ -178,7 +177,7 @@ const VideoRecorder: FC = () => {
   };
 
   return (
-    <div className="flex h-full w-full">
+    <div className="flex h-full w-full py-8">
       {loading ? (
         <div className="flex h-full w-full flex-col items-center justify-center">
           <div className="spinner items-center justify-center">
@@ -211,7 +210,7 @@ const VideoRecorder: FC = () => {
                 </div>
 
                 {/* Button */}
-                <div className="container flex w-full flex-row justify-center space-x-3 pt-4 text-center">
+                <div className="container flex w-full flex-row justify-center space-x-3 pt-10 text-center">
                   {recording ? (
                     <button
                       className="flex w-full max-w-[300px] items-center justify-center rounded-md bg-red-500
@@ -224,8 +223,8 @@ const VideoRecorder: FC = () => {
                     </button>
                   ) : (
                     <button
-                      className="flex w-full max-w-[300px] rounded-md bg-blue-500 font-bold text-white
-                       hover:bg-blue-600"
+                      className="flex w-full max-w-[300px] rounded-md border-2 border-black bg-blue-500
+                       font-bold text-white hover:bg-blue-600"
                       onClick={startRecording}
                       disabled={asking}
                     >
@@ -236,8 +235,8 @@ const VideoRecorder: FC = () => {
                   )}
 
                   <button
-                    className="flex h-12 w-full max-w-[300px] rounded-md bg-green-500 font-bold 
-                    text-white  hover:bg-green-600"
+                    className="flex h-12 w-full max-w-[300px] rounded-md border-2 border-black 
+                    bg-green-500  font-bold text-white hover:bg-green-600"
                     disabled={asking}
                     onClick={handleNewQuestion}
                   >
@@ -262,43 +261,34 @@ const VideoRecorder: FC = () => {
             )}
           </div>
 
-          <div className="mt-4 w-full flex justify-center">
-      <div className="flex flex-row justify-center items-center cursor-pointer" onClick={handleScrollToBottom}>
-        <p className="text-sm text-black">Show my insights</p>
-        <svg className="ml-2 w-4 h-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <path fillRule="evenodd" d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd"/>
-        </svg>
-      </div>
-    </div>
-
-            {/* The empty space with the AudioWidgets */}
-            <div className="my-1 w-full flex justify-center">
-                        {/* <div className="rounded-lg border-2 border-black bg-[#FFFAF0] p-10"> */}
-                            <AudioWidgets modelName="prosody" recordingLengthMs={500} streamWindowLengthMs={2000} />
-                        {/* </div> */}
-                    </div>
-
           {/* Summary */}
-          <div className="flex">
-            <div className="grid grid-cols-2">
-              <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
-                <h1 className="py-5 text-4xl font-bold">Question</h1>
-                <p className="text-xl">{question}</p>
           {isDone && (
-            <div className="mt-16 flex">
-              <div className="grid grid-cols-2">
-                <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
-                  <h1 className="py-5 text-4xl font-bold">Question</h1>
-                  <p className="text-xl">{question}</p>
+            <div className="flex flex-col items-center">
+              <div className="mt-16 flex">
+                <div className="grid grid-cols-2">
+                  <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
+                    <h1 className="py-5 text-4xl font-bold">Question</h1>
+                    <p className="text-xl">{question}</p>
 
-                  <h1 className="py-5 text-4xl font-bold">Response</h1>
-                  <p className="text-xl">{response}</p>
-                </div>
+                    <h1 className="py-5 text-4xl font-bold">Response</h1>
+                    <p className="text-xl">{response}</p>
+                  </div>
 
-                <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
-                  <h1 className="py-5 text-4xl font-bold">Feedback</h1>
-                  <p className="text-lg">{critique}</p>
+                  <div className="m-4 rounded-lg border-2 border-black bg-[#FFFAF0] p-10">
+                    <h1 className="py-5 text-4xl font-bold">Feedback</h1>
+                    <p className="text-lg">{critique}</p>
+                  </div>
                 </div>
+              </div>
+              <div
+                className="flex items-center justify-center rounded-md border-2 border-black bg-[#FFFAF0] py-5 px-20"
+                onClick={() => {
+                  setDone(false);
+                  setBlob(null);
+                  setLiveCam(true);
+                }}
+              >
+                <text className="text-4xl font-bold">Retry</text>
               </div>
             </div>
           )}
@@ -371,9 +361,8 @@ const VideoRecorder: FC = () => {
           {/* <ProsodyWidgets /> */}
         </div>
       )}
-
-        </div>
-    );
+    </div>
+  );
 };
 
 export default VideoRecorder;
