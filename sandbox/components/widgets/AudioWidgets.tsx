@@ -565,15 +565,15 @@ export function AudioWidgets({
             <DiscreteTimeline predictions={predictions} />
           </div>
         )}
-        {/* <div style={chartContainerStyle}>
+        <div style={chartContainerStyle}>
           <EmotionRadar data={radarData} />
-        </div> */}
+        </div>
         <div className="flex h-full w-full">
           <EngagementTimeline data={engagementChartData} />
         </div>
-        {/* <div style={chartContainerStyle}>
+        <div style={chartContainerStyle}>
           <EmotionTimeline data={chartData} />
-        </div> */}
+        </div>
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex h-full flex-col bg-neutral-100 font-main font-thin text-neutral-800">
+      <div className="flex h-full flex-col font-main font-thin text-neutral-800">
         <Auth>
           <Nav />
           <div className="flex h-full w-full">

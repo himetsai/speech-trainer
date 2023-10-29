@@ -5,8 +5,6 @@ import { useEffect, useRef, useState, FC } from "react";
 export function Nav() {
   const [showInfoModal, setShowInfoModal] = useState(false);
 
-  
-
   return (
     <div>
       <div className="flex w-full items-center justify-between px-10 py-0 md:w-auto md:rounded-full">
