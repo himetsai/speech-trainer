@@ -3,6 +3,8 @@ import { FaceWidgets } from "../components/widgets/FaceWidgets";
 import { Emotion } from "../lib/data/emotion";
 import { ProsodyWidgets } from "../components/widgets/ProsodyWidgets";
 import { fetchFeedback, fetchSTT, fetchTTS } from "../api.js";
+import { getRandomQuestion } from "../util.js"
+
 import Image from "next/image";
 
 const VideoRecorder: FC = () => {
@@ -20,6 +22,8 @@ const VideoRecorder: FC = () => {
   const [time, setTime] = useState<number>(30);
   const [showtime, setShowTime] = useState<boolean>(false);
   const [EmotionSnapshots, setEmotionSnapshots] = useState<Emotion[][]>([]);
+  const [question, setQuestion] = useState<string>("Describe a time when you faced a significant challenge at work. How did you handle it?");
+  const [asking, setAsking] = useState<boolean>(false);
 
   useEffect(() => {
     let chunks: Blob[] = [];
@@ -71,7 +75,9 @@ const VideoRecorder: FC = () => {
         );
         const feedback = await fetchFeedback(
           "http://127.0.0.1:5000/api/feedback",
-          transcript
+          {"question": question,
+            "answer": transcript.text,
+          },
         );
         const feedbackUrl = await fetchTTS(
           "http://127.0.0.1:5000/api/text-to-speech",
@@ -130,6 +136,26 @@ const VideoRecorder: FC = () => {
       stopRecording();
     }
   }, [recording, time]);
+
+  const handleNewQuestion = async () => {
+    console.log("CLICKED")
+    setAsking(true);
+    let new_question = question
+    while (new_question === question) {
+      new_question = getRandomQuestion();
+    }
+    setQuestion(new_question);
+    const questionUrl = await fetchTTS(
+      "http://127.0.0.1:5000/api/text-to-speech",
+      question,
+      "Bella",
+      "question",
+    );
+    console.log(questionUrl);
+    const questionSpeech = new Audio(questionUrl);
+    questionSpeech.addEventListener('ended', () => setAsking(false))
+    questionSpeech.play();
+  }
 
   return (
     <div className="container mx-auto flex h-full py-8">
@@ -195,7 +221,35 @@ const VideoRecorder: FC = () => {
             )}
           </div>
 
-          {/* {blob && !recording && (
+        <div className="container flex flex-row justify-center">
+
+          {recording ? (
+            <button
+              className="rounded-lg bg-red-500 py-2 px-4 p-4 font-bold text-white hover:bg-red-600 lg:w-1/5"
+              onClick={stopRecording}
+            >
+              Stop Recording
+            </button>
+          ) : (
+            <button
+              className="rounded-lg bg-blue-500 py-2 px-4 p-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+              onClick={startRecording}
+              disabled={asking}
+            >
+              Start Recording
+            </button>
+          )}
+
+            <button
+              className="rounded-lg bg-green-500 py-2 px-4 p-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
+              onClick={handleNewQuestion}
+              disabled={asking}
+            >
+              New Question
+            </button>
+
+        </div>
+        {/* {blob && !recording && (
           <video src={URL.createObjectURL(blob)} controls></video>
         )} */}
           {/* <ProsodyWidgets /> */}
