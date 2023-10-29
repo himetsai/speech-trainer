@@ -550,63 +550,57 @@ export function AudioWidgets({
   }
 
   const chartContainerStyle: React.CSSProperties = {
-    width: '31%',  // Adjusted width
-    height: '300px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    boxSizing: 'border-box',
-    padding: '0 15px',
-    margin: '20px 10px',  // Existing horizontal margin for spacing
-    border: '2px solid black',
-    borderRadius: '15px',
-    backgroundColor: '#FFFAF0'
-};
+    width: "31%", // Adjusted width
+    height: "300px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    boxSizing: "border-box",
+    padding: "0 15px",
+    margin: "20px 10px", // Existing horizontal margin for spacing
+    border: "2px solid black",
+    borderRadius: "15px",
+    backgroundColor: "#FFFAF0",
+  };
 
-const radarWrapperStyle: React.CSSProperties = {
-  width: '80%', // make it 90% of its container's width, adjust as needed
-  height: '80%', // make it 90% of its container's height, adjust as needed
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-};
+  const radarWrapperStyle: React.CSSProperties = {
+    width: "80%", // make it 90% of its container's width, adjust as needed
+    height: "80%", // make it 90% of its container's height, adjust as needed
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  };
 
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="flex w-full items-center justify-center">
+        {onTimeline ? (
+          <div style={chartContainerStyle}>
+            <h1 className="py-5 text-2xl font-bold">Discrete Timeline</h1>
+            <DiscreteTimeline predictions={predictions} />
+          </div>
+        ) : null}
 
-return (
-    <div className="flex h-full w-full justify-center items-center">
-        <div className="flex w-full justify-center items-center">
-            
-            {onTimeline ? (
-                <div style={chartContainerStyle}>
-                    <h1 className="py-5 text-2xl font-bold">Discrete Timeline</h1>
-                    <DiscreteTimeline predictions={predictions} />
-                </div>
-            ) : null}
-
-            <div style={chartContainerStyle}>
-                <h1 className="py-2 text-2xl font-bold">Trait Map</h1>
-                <div style={radarWrapperStyle}>
-                    <EmotionRadar data={radarData} />
-                </div>
-            </div>
-            
-            <div style={chartContainerStyle}>
-                <h1 className="py-5 text-2xl font-bold">Trait Timeline</h1>
-                <EmotionTimeline data={chartData} />
-            </div>
-
-            <div style={chartContainerStyle}>
-                <h1 className="py-5 text-2xl font-bold">Engagement Timeline</h1>
-                <EngagementTimeline data={engagementChartData} />
-            </div>
+        <div style={chartContainerStyle}>
+          <h1 className="py-2 text-2xl font-bold">Trait Map</h1>
+          <div style={radarWrapperStyle}>
+            <EmotionRadar data={radarData} />
+          </div>
         </div>
+
+        <div style={chartContainerStyle}>
+          <h1 className="py-5 text-2xl font-bold">Trait Timeline</h1>
+          <EmotionTimeline data={chartData} />
+        </div>
+
+        <div style={chartContainerStyle}>
+          <h1 className="py-5 text-2xl font-bold">Engagement Timeline</h1>
+          <EngagementTimeline data={engagementChartData} />
+        </div>
+      </div>
     </div>
-);
-
-
-
-
+  );
 }
 
 AudioWidgets.defaultProps = {
