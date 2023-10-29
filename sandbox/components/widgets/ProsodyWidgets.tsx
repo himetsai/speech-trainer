@@ -1,10 +1,6 @@
 import { AudioWidgets } from "./AudioWidgets";
 
-type AudioWidgetsProps = {
-  recording: boolean;
-}
-
-export function ProsodyWidgets({ recording }: AudioWidgetsProps) {
+export function ProsodyWidgets({}) {
   return (
     <div>
       <AudioWidgets
