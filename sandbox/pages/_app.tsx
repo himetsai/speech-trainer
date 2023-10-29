@@ -10,8 +10,10 @@ import { Auth } from "../components/menu/Auth";
 import Head from "next/head";
 import { Nav } from "../components/menu/Nav";
 import { Toolbar } from "../components/menu/Toolbar";
+import { useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
+
   return (
     <>
       <Head>
