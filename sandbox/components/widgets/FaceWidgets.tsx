@@ -241,8 +241,8 @@ export function FaceWidgets({
   }
 
   return (
-    <div>
-      <div className="md:flex">
+    <div className="container mx-auto flex justify-center items-center">
+      <div className="flex flex-col">
         <FaceTrackedVideo
           className="mb-6"
           onVideoReady={onVideoReady}
@@ -250,7 +250,7 @@ export function FaceWidgets({
           width={500}
           height={375}
         />
-        {!onCalibrate && (
+        {/* {!onCalibrate && (
           <div className="ml-10">
             <TopEmotions emotions={emotions} />
             <LoaderSet
@@ -261,10 +261,10 @@ export function FaceWidgets({
             />
             <Descriptor className="mt-8" emotions={emotions} />
           </div>
-        )}
-      </div>
+        )} */}
 
-      <div className="pt-6">{status}</div>
+      <div className="pt-6 pb-6">{status}</div></div>
+        
       <canvas className="hidden" ref={photoRef}></canvas>
     </div>
   );
