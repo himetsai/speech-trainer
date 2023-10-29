@@ -10,7 +10,13 @@ type FaceTrackedVideoProps = {
   height: number;
 };
 
-export function FaceTrackedVideo({ className, trackedFaces, onVideoReady, width, height }: FaceTrackedVideoProps) {
+export function FaceTrackedVideo({
+  className,
+  trackedFaces,
+  onVideoReady,
+  width,
+  height,
+}: FaceTrackedVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   className = className || "";
@@ -44,14 +50,19 @@ export function FaceTrackedVideo({ className, trackedFaces, onVideoReady, width,
     graphics.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     if (trackedFaces.length > 0) {
-      graphics.fillStyle = "rgb(40, 40, 40, 0.5)";
+      graphics.fillStyle = "rgb(40, 40, 40, 0)";
       graphics.fillRect(0, 0, canvasElement.width, canvasElement.height);
     }
 
     trackedFaces.forEach(async (trackedFace: TrackedFace) => {
       const bbox = trackedFace.boundingBox;
       const scale = 20;
-      const b = { x: bbox.x - scale, y: bbox.y - scale, w: bbox.w + 2 * scale, h: bbox.h + 2 * scale };
+      const b = {
+        x: bbox.x - scale,
+        y: bbox.y - scale,
+        w: bbox.w + 2 * scale,
+        h: bbox.h + 2 * scale,
+      };
 
       graphics.beginPath();
 
@@ -74,8 +85,16 @@ export function FaceTrackedVideo({ className, trackedFaces, onVideoReady, width,
   }
 
   return (
-      <div className={`relative h-[200px] w-full overflow-hidden rounded-lg border border-neutral-300 bg-black align-top shadow md:h-[355px] md:w-[500px] ${className}`}>
-      <video className="absolute -scale-x-[1]" ref={videoRef} autoPlay playsInline muted></video>
+    <div
+      className={`relative h-[200px] w-full overflow-hidden rounded-lg border border-neutral-300 bg-black align-top shadow md:h-[355px] md:w-[500px] ${className}`}
+    >
+      <video
+        className="absolute -scale-x-[1]"
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+      ></video>
       <canvas className="absolute" ref={canvasRef}></canvas>
     </div>
   );
