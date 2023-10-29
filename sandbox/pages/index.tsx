@@ -144,7 +144,7 @@ const VideoRecorder: FC = () => {
 
   const handleScrollToBottom = () => {
     window.scrollBy({
-        top: window.innerHeight, // scrolls down by one viewport height
+        top: window.innerHeight - 60, // scrolls down by one viewport height
         behavior: 'smooth'
     });
 };
