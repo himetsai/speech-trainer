@@ -22,14 +22,14 @@ export const fetchFeedback = async (url, answer) => {
   }
 };
 
-export const fetchTTS = async (url, text, voice) => {
+export const fetchTTS = async (url, text, voice, res_type) => {
   const data = {
     text: text,
     voice: voice,
   };
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(url+`/${res_type}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
