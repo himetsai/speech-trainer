@@ -142,22 +142,32 @@ const VideoRecorder: FC = () => {
             )}
           </div>
 
-          {recording ? (
+        <div className="container flex flex-row justify-center">
+
+            {recording ? (
+              <button
+                className="rounded-lg bg-red-500 py-2 px-4 p-4 font-bold text-white hover:bg-red-600 lg:w-1/5"
+                onClick={stopRecording}
+              >
+                Stop Recording
+              </button>
+            ) : (
+              <button
+                className="rounded-lg bg-blue-500 py-2 px-4 p-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
+                onClick={startRecording}
+              >
+                Start Recording
+              </button>
+            )}
+  
             <button
-              className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
-              onClick={stopRecording}
+              className="rounded-lg bg-green-500 py-2 px-4 p-4 font-bold text-white hover:bg-green-600 lg:w-1/5"
             >
-              Stop Recording
+              New Question
             </button>
-          ) : (
-            <button
-              className="rounded-lg bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-600 lg:w-1/5"
-              onClick={startRecording}
-            >
-              Start Recording
-            </button>
-          )}
-          {/* {blob && !recording && (
+
+        </div>
+        {/* {blob && !recording && (
           <video src={URL.createObjectURL(blob)} controls></video>
         )} */}
           {/* <ProsodyWidgets /> */}

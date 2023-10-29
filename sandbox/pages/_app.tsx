@@ -27,7 +27,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <div className="flex h-full w-full">
             <Component {...pageProps} />
           </div>
-          {/* <Toolbar /> */}
         </Auth>
       </div>
     </>
