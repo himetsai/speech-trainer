@@ -5,29 +5,28 @@ import together
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from elevenlabs import generate, save
+from flask_cors import CORS
+import logging
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/api/feedback', methods=['POST'])
 def feedback():
     together.api_key = os.environ.get("TOGETHER_API_KEY")
-
-    data = request.json
-
-    if not data:
-        return jsonify({'error': 'No data provided'}), 400
     
     question = "Tell me about your experience during your last internship."
-    answer = data.get('answer')
 
+    answer = request.json.get("text")
+    prompt = "Question: \"" + question + "\"\nResponse: \"" + answer + \
+        "\"\nGiven this interview question, provide constructive critical feedback to help me improve my answer."
 
-    prompt = "Given an interview question and this response, provide a constructive critical analysis to help improve my interview answer pretending you are a speaking coach directing guidance. Be concise, no need to explain everything in detail. Question: " + question + " Response: " + answer
-    # prompt = "hi how are you?"
+    print(prompt)
     output = together.Complete.create(
         prompt,
-        model = "togethercomputer/llama-2-13b-chat", 
+        model = "togethercomputer/llama-2-7b-chat", 
         max_tokens = 512,
         temperature = 0.8,
         top_k = 50,
@@ -39,26 +38,29 @@ def feedback():
 @app.route('/api/speech-to-text', methods=['POST'])
 def speech_to_text():
     """
-    Request format: {"filepath": "/path/to/audio/file.mp3}
+    Request format: {"filepath": "blobUrl"}
     """
     try:
         openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-        audio_filepath = request.json["filepath"]
+        # audio_filepath = request.json["filepath"]
 
-        if not os.path.exists(audio_filepath):
-            return jsonify({'Error': 'File not found'}), 404
+        # if not os.path.exists(audio_filepath):
+        #     return jsonify({'Error': 'File not found'}), 404
         
-        file_size = os.path.getsize(audio_filepath)
+        # file_size = os.path.getsize(audio_filepath)
         
         # Check if the file size is greater than 25 MB
-        if file_size > 25 * 1024 * 1024:
-            return jsonify({'error': 'File size exceeds 25 MB'}), 400
-        
-        audio_file = open(audio_filepath, "rb")
+        # if file_size > 25 * 1024 * 1024:
+        #     return jsonify({'error': 'File size exceeds 25 MB'}), 400
+        # print(request.files["audio"])
+
+        audio_file = request.files["audio"]
+        audio_file.save('audio.wav')
+        audio_file = open("audio.wav", "rb")
         try:
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
-            return transcript["text"]
+            return jsonify(transcript)
         except Exception as e:
             return jsonify({'Error': str(e)}), 404
 

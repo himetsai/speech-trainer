@@ -250,7 +250,7 @@ export function FaceWidgets({
           width={500}
           height={375}
         />
-        {!onCalibrate && (
+        {/* {!onCalibrate && (
           <div className="ml-10">
             <TopEmotions emotions={emotions} />
             <LoaderSet
@@ -261,7 +261,7 @@ export function FaceWidgets({
             />
             <Descriptor className="mt-8" emotions={emotions} />
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="pt-6">{status}</div>
