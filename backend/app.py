@@ -66,7 +66,7 @@ def speech_to_text():
 
     except Exception as e:
         return jsonify({'Error': str(e)}), 500
-
+    
 @app.route('/api/text-to-speech/<res_type>', methods=['POST'])
 def text_to_speech(res_type):
     """
