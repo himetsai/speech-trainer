@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, FC } from "react";
 import { FaceWidgets } from "../components/widgets/FaceWidgets";
 import { Emotion } from "../lib/data/emotion";
 import { ProsodyWidgets } from "../components/widgets/ProsodyWidgets";
-import { fetchFeedback, fetchSTT } from "../api.js";
+import { fetchFeedback, fetchSTT, fetchTTS } from "../api.js";
 
 const VideoRecorder: FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -62,8 +62,22 @@ const VideoRecorder: FC = () => {
         const audio = new Audio(audioUrl);
         audio.play();
 
-        const transcript = await fetchSTT("http://127.0.0.1:5000/api/speech-to-text", audioBlob);
-        const feedback = await fetchFeedback("http://127.0.0.1:5000/api/feedback", transcript)
+        const transcript = await fetchSTT(
+          "http://127.0.0.1:5000/api/speech-to-text",
+          audioBlob
+        );
+        const feedback = await fetchFeedback(
+          "http://127.0.0.1:5000/api/feedback",
+          transcript
+        );
+        const feedbackUrl = await fetchTTS(
+          "http://127.0.0.1:5000/api/text-to-speech",
+          feedback,
+          "Bella"
+        );
+        console.log(feedbackUrl);
+        const feedbackSpeech = new Audio(feedbackUrl);
+        feedbackSpeech.play();
         chunks = [];
       };
     }

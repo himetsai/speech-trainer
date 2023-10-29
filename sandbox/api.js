@@ -2,53 +2,51 @@
 
 export const fetchFeedback = async (url, answer) => {
   // Make a POST request
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(answer),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        // Log the response content if there's an error
-        const text = await response.text();
-        throw new Error(
-          `HTTP error! Status: ${response.status}, Body: ${text}`
-        );
-      }
-      return response.json();
-    })
-    .then((data) => console.log(data))
-    .catch((error) => console.error("Error:", error));
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(answer),
+    });
+    if (!res.ok) {
+      // Log the response content if there's an error
+      const text = await res.text();
+      throw new Error(`HTTP error! Status: ${res.status}, Body: ${text}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.error("Error:", e);
+  }
 };
 
-const fetchTTS = async (url, text, voice) => {
+export const fetchTTS = async (url, text, voice) => {
   const data = {
     text: text,
     voice: voice,
   };
 
-  // Make a POST request
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        // Log the response content if there's an error
-        const text = await response.text();
-        throw new Error(
-          `HTTP error! Status: ${response.status}, Body: ${text}`
-        );
-      }
-      return response.json();
-    })
-    .then((data) => console.log(data))
-    .catch((error) => console.error("Error:", error));
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(res);
+    if (!res.ok) {
+      // Log the response content if there's an error
+      const text = await res.text();
+      throw new Error(`HTTP error! Status: ${res.status}, Body: ${text}`);
+    }
+    const d = await res.blob();
+    return URL.createObjectURL(d);
+  } catch (e) {
+    console.error("Error:", e);
+  }
 };
 
 export const fetchSTT = async (url, audioBlob) => {
@@ -60,24 +58,9 @@ export const fetchSTT = async (url, audioBlob) => {
   const res = await fetch(url, {
     method: "POST",
     body: formData,
-  })
+  });
 
   const val = await res.json();
 
-  console.log(val);
-
   return val;
-
-    // .then(async (response) => {
-    //   if (!response.ok) {
-    //     // Log the response content if there's an error
-    //     const text = await response.text();
-    //     throw new Error(
-    //       `HTTP error! Status: ${response.status}, Body: ${text}`
-    //     );
-    //   }
-    //   console.log(response.text());
-    //   return response.text();
-    // })
-    // .catch((error) => console.error("Error:", error));
 };
